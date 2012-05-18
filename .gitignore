@@ -1,0 +1,8 @@
+*~
+~*
+.ropeproject
+*.pyc
+\#*\#
+.settings
+.pydevproject
+.project
