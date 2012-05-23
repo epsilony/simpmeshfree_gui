@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from jpype import startJVM, getDefaultJVMPath, isJVMStarted
 import os
 from multiprocessing import Process, Queue, Lock
