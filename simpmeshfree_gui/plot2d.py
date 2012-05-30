@@ -3,7 +3,7 @@ from matplotlib.path import Path
 from matplotlib.patches import PathPatch, Circle
 from simpmeshfree_gui.jvm_utils import iter_Iterable
 import numpy as np
-from jpype import java, JClass
+from jpype import java, JClass, JPackage,JArray,JInt
 
 def merge_paths(*args):
     len_vs = 0
@@ -305,7 +305,7 @@ class SupportDomainPainter(object):
         self.visible_status_patch_b2 = ax.add_patch(PathPatch(path2, **(self.visible_status_patch_b2_setting)))
         
     def _gen_visibility_path(self, center, nds, bnds, is_bnd_nds):
-        self.geomUtils.visibleStatus(center, nds, bnds, self.nodeBlockNums, self.nodeBlockBndIdx, is_bnd_nds)
+        self.geomUtils.visibleStatus(center, nds, is_bnd_nds, bnds, self.nodeBlockNums, self.nodeBlockBndIdx)
         blocked_once_nds = deque()
         blocked_once_bnds = deque()
         blocked_more_nds = deque()
@@ -355,4 +355,20 @@ class SupportDomainPainter(object):
         path_2 = Path(vertices, codes)
         
         return (path_1, path_2)
+
+
+class WeakformProblemPainter(object):
+    def __init__(self,problem):
+        self.problem=problem
+    
+    def plot(self):
+        QuadraturePoint =JPackage('net').epsilony.simpmeshfree.utils.QuadraturePoint
+        qp=QuadraturePoint()
+        pb=self.problem
+        JintArray=JArray(JInt)
+        numOut=JintArray([0])
+        quadIter=pb.neumannIterator(numOut)
+        while(quadIter.next(qp)):
+            print qp.coordinate
+            
         
