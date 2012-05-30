@@ -2,6 +2,7 @@ from matplotlib.path import Path
 import numpy as np
 from jpype import JClass, JDouble
 from collections import deque
+from simpmeshfree_gui.jvm_utils import iter_Iterable
 
 def path_ccw(pth, err=1e-6):
     path_iter = pth.iter_segments()
@@ -52,6 +53,28 @@ def path_to_LineBoundary(pth):
         start_node = end_node
     return lines
 
-        
-            
-     
+def print_np_array(arr):
+    shape=arr.shape;
+    print '{'
+    for i in xrange(shape[0]):
+        print '{',
+        for j in xrange(shape[1]):
+            print arr[i][j],
+            if j != shape[1]-1:
+                print ',',
+            elif i!=shape[0]-1:
+                print '},'
+            else:
+                print '}',
+    print '}'
+
+def JDoubleArrayList_to_np_array(ds):
+    result=np.ndarray((ds.size(),len(ds.get(0))))
+    i=0
+    for d in iter_Iterable(ds):
+        result[i]=d
+        i+=1
+    return result;
+
+def Coordinate_2_np_array(coord):
+    return np.array([coord.x,coord.y,coord.z])
