@@ -26,6 +26,7 @@ if __name__=='__main__':
     WU=JClass('net.epsilony.simpmeshfree.model2d.test.WeakformProcessor2DDemoUtils')
     Node=JClass('net.epsilony.simpmeshfree.model.Node')
     TimoshenkoBeam=JClass('net.epsilony.simpmeshfree.model2d.TimoshenkoExactBeam2D')
+    PostProcessor=JClass('net.epsilony.simpmeshfree.model.CommonPostProcessor')
     pipe=WU.newPipe()
     processor=WU.timoshenkoBeam(pipe)    
     JIntArray=JArray(JInt)
@@ -45,9 +46,11 @@ if __name__=='__main__':
     
     nds=pipe.geomUtils.allNodes
     ndsVal=nodesValue(processor)
+    
+    postProcessor=PostProcessor(processor.shapeFunFactory.factory(),processor.getNodesValue())
     ndsExactRes=exact_displacements(tBeam,nds)
     
-    qpResult=JDoubleArrayList_to_np_array(processor.result(coords,None))
+    qpResult=JDoubleArrayList_to_np_array(postProcessor.result(coords,None))
     
     coords=java.util.LinkedList()
     bnds=java.util.LinkedList()
@@ -58,7 +61,7 @@ if __name__=='__main__':
         coords.add(coord)
         bnds.add(bnd)
         pass
-    diriRes=processor.result(coords,bnds)
+    diriRes=postProcessor.result(coords,bnds)
     diriRes=JDoubleArrayList_to_np_array(diriRes)
     diriExp=np.ndarray((coords.size(),2))
     diriIter=workPb.dirichletIterator(None)
