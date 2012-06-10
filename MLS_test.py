@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+
 from simpmeshfree_gui.jvm_utils import start_jvm, iter_Iterable
-from jpype import JClass, java, JPackage, JInt
+from jpype import JClass, java, JPackage
 import numpy as np
 
 def coord_to_array(coord):
@@ -135,5 +134,3 @@ if __name__ == '__main__':
     res_xy=np.array([(nd.x,nd.y) for nd in resNds])
     res_exp=np.array([expFun.value(nd)[0] for nd in resNds])
 
-    #没有发现shapeVal2* 与 shapeFunVals的显著差别，但是仍然不能通过测试。
-    #TODO：重做一遍测试。

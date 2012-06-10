@@ -68,13 +68,19 @@ def print_np_array(arr):
                 print '}',
     print '}'
 
-def JDoubleArrayList_to_np_array(ds):
+def JDArr_List_2_np(ds):
     result=np.ndarray((ds.size(),len(ds.get(0))))
     i=0
     for d in iter_Iterable(ds):
         result[i]=d
         i+=1
     return result;
+
+def JTDList_List_2_np(tds):
+    res=np.ndarray((tds.size(),tds.get(0).size()))
+    for i in xrange(tds.size()):
+        res[i]=np.array(tds.get(i).toArray())
+    return res
 
 def Coordinate_2_np_array(coord):
     return np.array([coord.x,coord.y,coord.z])
