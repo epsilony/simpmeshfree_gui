@@ -33,11 +33,11 @@ def nodesValue(processer):
         result[i]=(ndsRes.get(i*2),ndsRes.get(i*2+1))
     return result
 
-def run_processor():
+def run_processor(iterativeSolver=False):
     start_jvm(debug_port=8998)
     WU=JClass('net.epsilony.simpmeshfree.model2d.test.WeakformProcessor2DDemoUtils')
     pipe=WU.newPipe()
-    processor=WU.timoshenkoBeam(pipe)    
+    processor=WU.timoshenkoBeam(pipe,iterativeSolver)    
     processor.process()
     processor.solveEquation()
     return (processor,pipe)
@@ -136,7 +136,8 @@ def plot_on_line(tBeam,postProcessor,x=None,y=0,val_type='displacement',step=0.1
     return (fig,ax,output_xs,output_ys,output_labels)
         
 if __name__=='__main__':
-    (processor,pipe)=run_processor()
+    use_iterative_solver=True;
+    (processor,pipe)=run_processor(use_iterative_solver)
     QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
     Node=JClass('net.epsilony.simpmeshfree.model.Node')
     TimoshenkoBeam=JClass('net.epsilony.simpmeshfree.model2d.TimoshenkoExactBeam2D')
