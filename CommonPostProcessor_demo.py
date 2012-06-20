@@ -33,12 +33,17 @@ def nodesValue(processer):
         result[i]=(ndsRes.get(i*2),ndsRes.get(i*2+1))
     return result
 
-def run_processor(iterativeSolver=False):
-    start_jvm(debug_port=8998)
+def run_processor(iterativeSolver=False,core_num=None,monitor=None):
+    
     WU=JClass('net.epsilony.simpmeshfree.model2d.test.WeakformProcessor2DDemoUtils')
     pipe=WU.newPipe()
-    processor=WU.timoshenkoBeam(pipe,iterativeSolver)    
-    processor.process()
+    processor=WU.timoshenkoBeam(pipe,iterativeSolver)
+    if(monitor is not None):
+        processor.setMonitor(monitor)
+    if(core_num is None):  
+        processor.process()
+    else:
+        processor.process(core_num);
     processor.solveEquation()
     return (processor,pipe)
 
@@ -46,24 +51,23 @@ def problem_record_Lists(pb):
     QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
     Node=JClass('net.epsilony.simpmeshfree.model.Node')
     qp=QuadraturePoint()
-    JIntArray=JArray(JInt)  
-    outNum=JIntArray([0])
-    volIter=pb.volumeIterator(outNum)
-    volCoords=java.util.ArrayList(outNum[0])
+
+    volIter=pb.volumeIterator()
+    volCoords=java.util.ArrayList(volIter.sumNum)
     while(volIter.next(qp)):
         volCoords.add(Node(qp.coordinate))
     
-    diriIter=pb.dirichletIterator(outNum)
-    diriCoords=java.util.ArrayList(outNum[0])
-    diriBnds=java.util.ArrayList(outNum[0])
+    diriIter=pb.dirichletIterator()
+    diriCoords=java.util.ArrayList(diriIter.sumNum)
+    diriBnds=java.util.ArrayList(diriIter.sumNum)
     
     while(diriIter.next(qp)):
         diriCoords.add(Node(qp.coordinate))
         diriBnds.add(qp.boundary)
         
-    neumIter=pb.neumannIterator(outNum)
-    neumCoords=java.util.ArrayList(outNum[0])
-    neumBnds=java.util.ArrayList(outNum[0])
+    neumIter=pb.neumannIterator()
+    neumCoords=java.util.ArrayList(neumIter.sumNum)
+    neumBnds=java.util.ArrayList(neumIter.sumNum)
     while(neumIter.next(qp)):
         neumCoords.add(Node(qp.coordinate))
         neumBnds.add(qp.boundary);
@@ -136,17 +140,26 @@ def plot_on_line(tBeam,postProcessor,x=None,y=0,val_type='displacement',step=0.1
     return (fig,ax,output_xs,output_ys,output_labels)
         
 if __name__=='__main__':
-    use_iterative_solver=True;
-    (processor,pipe)=run_processor(use_iterative_solver)
+    start_jvm(debug_port=8998)
     QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
     Node=JClass('net.epsilony.simpmeshfree.model.Node')
     TimoshenkoBeam=JClass('net.epsilony.simpmeshfree.model2d.TimoshenkoExactBeam2D')
     PostProcessor=JClass('net.epsilony.simpmeshfree.model.CommonPostProcessor')
     CommonUtils=JPackage('net').epsilony.simpmeshfree.utils.CommonUtils
-    conLaw=CommonUtils.toDenseMatrix64F(pipe.conLaw)   
+    Monitors=JPackage('net').epsilony.simpmeshfree.model.WeakformProcessorMonitors
+    
+    use_iterative_solver=True;
+    core_num=20;
+    monitors=java.util.ArrayList()
+    monitors.add(Monitors.recorder())
+    monitors.add(Monitors.simpLogger())
+    monitor=Monitors.compact(monitors)
+    
+    (processor,pipe)=run_processor(use_iterative_solver,core_num,monitor)
     
     qp=QuadraturePoint()
-
+    conLaw=CommonUtils.toDenseMatrix64F(pipe.conLaw)   
+    
     workPb=pipe.workProblem
     tBeam=workPb.tBeam 
     nds=pipe.geomUtils.allNodes
