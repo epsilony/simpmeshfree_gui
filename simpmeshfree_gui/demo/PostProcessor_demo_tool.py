@@ -26,18 +26,18 @@ def exact_strain(tBeam,coords):
     return _exact_value(tBeam,coords,'strain')
 
 def nodesValue(processer):
-    ndsRes=processor.getNodesValue()
+    ndsRes=processer.getNodesValue()
     sz=ndsRes.size()/2
     result=np.ndarray((sz,2))
     for i in xrange(sz):
         result[i]=(ndsRes.get(i*2),ndsRes.get(i*2+1))
     return result
 
-def run_processor(iterativeSolver=False,core_num=None,monitor=None):
+def run_processor(iterativeSolver=False,isSimpAsm=True,core_num=None,monitor=None):
     
     WU=JClass('net.epsilony.simpmeshfree.model2d.test.WeakformProcessor2DDemoUtils')
     pipe=WU.newPipe()
-    processor=WU.timoshenkoBeam(pipe,iterativeSolver)
+    processor=WU.timoshenkoBeam(pipe,iterativeSolver,isSimpAsm)
     if(monitor is not None):
         processor.setMonitor(monitor)
     if(core_num is None):  
@@ -138,51 +138,3 @@ def plot_on_line(tBeam,postProcessor,x=None,y=0,val_type='displacement',step=0.1
     fig.canvas.draw()
     fig.show()
     return (fig,ax,output_xs,output_ys,output_labels)
-        
-if __name__=='__main__':
-    start_jvm(debug_port=8998)
-    QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
-    Node=JClass('net.epsilony.simpmeshfree.model.Node')
-    TimoshenkoBeam=JClass('net.epsilony.simpmeshfree.model2d.TimoshenkoExactBeam2D')
-    PostProcessor=JClass('net.epsilony.simpmeshfree.model.CommonPostProcessor')
-    CommonUtils=JPackage('net').epsilony.simpmeshfree.utils.CommonUtils
-    Monitors=JPackage('net').epsilony.simpmeshfree.model.WeakformProcessorMonitors
-    
-    use_iterative_solver=True;
-    core_num=20;
-    monitors=java.util.ArrayList()
-    monitors.add(Monitors.recorder())
-    monitors.add(Monitors.simpLogger())
-    monitor=Monitors.compact(monitors)
-    
-    (processor,pipe)=run_processor(use_iterative_solver,core_num,monitor)
-    
-    qp=QuadraturePoint()
-    conLaw=CommonUtils.toDenseMatrix64F(pipe.conLaw)   
-    
-    workPb=pipe.workProblem
-    tBeam=workPb.tBeam 
-    nds=pipe.geomUtils.allNodes
-    ndsVal=nodesValue(processor)
-    postProcessor=PostProcessor(processor.shapeFunFactory.factory(),processor.getNodesValue())    
-    (volCoords,diriCoords,diriBnds,neumCoords,neumBnds)=problem_record_Lists(workPb)
-    
-    ndsExactRes=exact_displacements(tBeam,nds)
-    
-    smpCoords=sample_Coords(tBeam.width,tBeam.height)
-    
-    smpExactDisps=exact_displacements(tBeam,smpCoords)
-    smpDispTDLists=postProcessor.displacements(smpCoords,None,1)
-    smpDisps=JTDList_List_2_np(smpDispTDLists.subList(0,2)).transpose()
-    
-    smpStrainTDList=PostProcessor.strain2D(smpDispTDLists,2)
-    smpStrain=JTDList_List_2_np(smpStrainTDList).transpose()
-    smpExactStrain=exact_strain(tBeam, smpCoords)
-    
-    smpStressTDList=PostProcessor.stress2D(smpDispTDLists,2,conLaw)
-    smpStress=JTDList_List_2_np(smpStressTDList).transpose()
-    smpExactStress=exact_stress(tBeam,smpCoords)
-    
-    (fig_disp,ax_disp,output_xs_disp,output_ys_disp,output_labels_disp)=plot_on_line(tBeam,postProcessor)
-    (fig_strain,ax_strain,output_xs_strain,output_ys_strain,output_labels_strain)=plot_on_line(tBeam,postProcessor,x=tBeam.width/2.0,y=None,val_type='strain')
-    (fig_stress,ax_stress,output_xs_stress,output_ys_stress,output_labels_stress)=plot_on_line(tBeam,postProcessor,x=tBeam.width/2.0,y=None,val_type='stress',conLaw=conLaw)

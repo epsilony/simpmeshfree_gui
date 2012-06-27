@@ -82,5 +82,11 @@ def JTDList_List_2_np(tds):
         res[i]=np.array(tds.get(i).toArray())
     return res
 
+def JTDList_Array_2_np(tds):
+    res=np.ndarray((len(tds),tds[0].size()))
+    for i in xrange(len(tds)):
+        res[i]=np.array(tds[i].toArray())
+    return res
+
 def Coordinate_2_np_array(coord):
     return np.array([coord.x,coord.y,coord.z])

@@ -9,7 +9,7 @@ if __name__=='__main__':
     start_jvm(debug_port=8998)
     TriSpline=JClass('net.epsilony.simpmeshfree.model.WeightFunctionCores$TriSpline')
     SimpPower=JClass('net.epsilony.simpmeshfree.model.WeightFunctionCores$SimpPower')
-    Common=JClass('net.epsilony.simpmeshfree.model.DistanceFunctions$Common')
+    Common=JClass('net.epsilony.simpmeshfree.model.DistanceSquareFunctions$Common')
     Node=JClass('net.epsilony.simpmeshfree.model.Node')
     WeightFunctions=JClass('net.epsilony.simpmeshfree.model.WeightFunctions')
     core_fun=TriSpline()

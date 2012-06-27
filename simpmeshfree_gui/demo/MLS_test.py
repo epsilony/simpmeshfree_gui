@@ -48,13 +48,13 @@ if __name__ == '__main__':
     start_jvm(debug_port=8998)
     TriSpline = JClass('net.epsilony.simpmeshfree.model.WeightFunctionCores$TriSpline')
     SimpPower = JClass('net.epsilony.simpmeshfree.model.WeightFunctionCores$SimpPower')
-    Common = JClass('net.epsilony.simpmeshfree.model.DistanceFunctions$Common')
+    Common = JClass('net.epsilony.simpmeshfree.model.DistanceSquareFunctions$Common')
     Node = JClass('net.epsilony.simpmeshfree.model.Node')
     TDoubleArrayList = JClass('gnu.trove.list.array.TDoubleArrayList')
     WeightFunctions = JClass('net.epsilony.simpmeshfree.model.WeightFunctions')
     WeightFunctionTestUtils = JPackage('net').epsilony.simpmeshfree.model2d.test.WeightFunctionTestUtils
     TU = WeightFunctionTestUtils
-    PB = JPackage('net').epsilony.simpmeshfree.utils.Complete2DPolynomialBase
+    PB = JPackage('net').epsilony.simpmeshfree.utils.Complete2DPolynomialBases
     LinkedList = java.util.LinkedList
     ArrayList = java.util.ArrayList
     
@@ -123,13 +123,13 @@ if __name__ == '__main__':
     gamma_x = gamma_x.transpose()
     shapeVal2_x = gamma_x * B + gamma * B_x
     shapeVal2_x = np.array(shapeVal2_x)
-    print np.max(shapeFunVals[1] - shapeVal2_x)
+    print 'x error = ',np.max(shapeFunVals[1] - shapeVal2_x)
     
     gamma_y = A ** -1 * np.matrix(p_y).transpose() - A ** -1 * A_y * gamma.transpose()
     gamma_y = gamma_y.transpose()
     shapeVal2_y = gamma_y * B + gamma * B_y
     shapeVal2_y = np.array(shapeVal2_y)
-    print np.max(shapeFunVals[2] - shapeVal2_y)
+    print 'y error = ',np.max(shapeFunVals[2] - shapeVal2_y)
     
     res_xy=np.array([(nd.x,nd.y) for nd in resNds])
     res_exp=np.array([expFun.value(nd)[0] for nd in resNds])
