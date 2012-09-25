@@ -31,12 +31,14 @@ def QuadPixcell_node_link_pos(pixcell,shrink=0.3):
     return (xs,ys)
 
 def QuadPixcell_neighbour_links(pixcell,shrink=0.3):
-    (xs,ys)=QuadPixcell_node_shrink_pos(pixcell,shrink)
+    (oxs,oys)=QuadPixcell_node_shrink_pos(pixcell,shrink)
+    xs=[]
+    ys=[]
     for i in xrange(4):
-        v=np.array((xs[(i+1)%4]-xs[i],ys[(i+1)%4]-ys[i]))
-        v=v/np.dot(v,v)**0.5*0.25
-        xs[i]+=v[0]
-        ys[i]+=v[1]
+        v=np.array((oxs[(i+1)%4]-oxs[i],oys[(i+1)%4]-oys[i]))
+        v=v*0.25
+        xs.append(oxs[i]+v[0])
+        ys.append(oys[i]+v[1])
     cxs=[]
     cys=[]
     for nb in pixcell.neighbours:
@@ -68,9 +70,9 @@ def QuadPixcells_nodes_pos(pxes):
     return result
 
 def QuadPixcell_plot(px,ax,shrink=0.3):
-    (xs,ys)=QuadPixcell_node_link_pos(px)
+    (xs,ys)=QuadPixcell_node_link_pos(px,shrink)
     ax.plot(xs,ys)
-    xsys=QuadPixcell_neighbour_links(px)
+    xsys=QuadPixcell_neighbour_links(px,shrink)
     for t in xsys:
         ax.plot(t[0],t[1])
 
