@@ -33,7 +33,7 @@ if __name__=='__main__':
     tBeam=workPb.tBeam 
     nds=pipe.geomUtils.allNodes
     ndsVal=nodesValue(processor)
-    postProcessor=PostProcessor(processor.shapeFunFactory.produce(),processor.getNodesValue())    
+    postProcessor=PostProcessor(processor.genShapeFunctionPacker(),processor.getNodesValue())    
     (volCoords,diriCoords,diriBnds,neumCoords,neumBnds)=problem_record_Lists(workPb)
     
     ndsExactRes=exact_displacements(tBeam,nds)
