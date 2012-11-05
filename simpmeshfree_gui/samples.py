@@ -164,7 +164,7 @@ def gen_GeomUtils(sample=1, size=None, quality_area=None, quality_angle=None, ve
     for line in lines:
         lineList.add(line)
     
-    Node = JClass('net.epsilony.simpmeshfree.model.Node')
+    Node = JClass('net.epsilony.utils.geom.Node')
     
     nodes = deque()
     for i in xrange(out_io.numberofpoints):

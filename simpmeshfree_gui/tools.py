@@ -37,7 +37,7 @@ def reverse_path(pth):
     return Path(new_v, new_c)
 
 def path_to_LineBoundary(pth):
-    Node = JClass('net.epsilony.simpmeshfree.model.Node')
+    Node = JClass('net.epsilony.utils.geom.Node')
     LineBoundary = JClass('net.epsilony.simpmeshfree.model.LineBoundary')
     lines = deque()
     for segment in pth.iter_segments():

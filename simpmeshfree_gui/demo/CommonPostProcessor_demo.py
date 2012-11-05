@@ -10,10 +10,10 @@ import matplotlib.pyplot as plt
 if __name__=='__main__':
     start_jvm(debug_port=8998)
     QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
-    Node=JClass('net.epsilony.simpmeshfree.model.Node')
+    Node=JClass('net.epsilony.utils.geom.Node')
     TimoshenkoBeam=JClass('net.epsilony.simpmeshfree.model2d.TimoshenkoExactBeam2D')
     PostProcessor=JClass('net.epsilony.simpmeshfree.model.CommonPostProcessor')
-    CommonUtils=JPackage('net').epsilony.simpmeshfree.utils.CommonUtils
+    CommonUtils=JPackage('net').epsilony.utils.spfun.CommonUtils
     Monitors=JPackage('net').epsilony.simpmeshfree.model.WeakformProcessorMonitors
     
     iterativeSolver=False

@@ -18,10 +18,10 @@ if __name__=='__main__':
         debug_port=None
     start_jvm(debug_port=debug_port)
     QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
-    Node=JClass('net.epsilony.simpmeshfree.model.Node')
+    Node=JClass('net.epsilony.utils.geom.Node')
     TimoshenkoBeam=JClass('net.epsilony.simpmeshfree.model2d.TimoshenkoExactBeam2D')
     PostProcessor=JClass('net.epsilony.simpmeshfree.model.CommonPostProcessor')
-    CommonUtils=JPackage('net').epsilony.simpmeshfree.utils.CommonUtils
+    CommonUtils=JPackage('net').epsilony.utils.spfun.CommonUtils
     Monitors=JPackage('net').epsilony.simpmeshfree.model.WeakformProcessorMonitors
     
     iterativeSolver=False
@@ -40,12 +40,12 @@ if __name__=='__main__':
     tBeam=workPb.tBeam 
     nds=pipe.geomUtils.allNodes
     ndsVal=nodesValue(processor)
-    postProcessor=PostProcessor(processor.shapeFunFactory.factory(),processor.getNodesValue())    
+    postProcessor=PostProcessor(processor.genShapeFunctionPacker(),processor.getNodesValue())    
     (volCoords,diriCoords,diriBnds,neumCoords,neumBnds)=problem_record_Lists(workPb)
     
     ndsExactRes=exact_displacements(tBeam,nds)  
     
-    res=plot_on_line(tBeam,postProcessor,x=0.0)
+    res=plot_on_line(tBeam,postProcessor,x=0.01)
     
     fig=plt.figure()
     titles=['u','v']

@@ -13,7 +13,7 @@ import numpy as np
 if __name__ == '__main__':
     start_jvm(debug_port=8998)
     BTU=JPackage('net').epsilony.simpmeshfree.model.test.BoundaryUtilsTestUtils
-    Node=JPackage('net').epsilony.simpmeshfree.model.Node
+    Node=JPackage('net').epsilony.utils.geom.Node
     center=Node(12.45,-20.8)
     rad=9.0
     theta=np.pi*2.1/3

@@ -49,7 +49,7 @@ def run_processor(iterativeSolver=False,isSimpAsm=True,core_num=None,monitor=Non
 
 def problem_record_Lists(pb):
     QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
-    Node=JClass('net.epsilony.simpmeshfree.model.Node')
+    Node=JClass('net.epsilony.utils.geom.Node')
     qp=QuadraturePoint()
 
     volIter=pb.volumeIterator()

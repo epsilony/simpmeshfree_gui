@@ -15,7 +15,11 @@ def start_jvm(debug_port=None):
 	simpmeshfree_path = os.getenv("SIMP_MESHFREE_PATH")
 	switches = []
 	if simpmeshfree_path is None:
-		switches.append('-Djava.class.path=/home/epsilon/SimpMeshfree/dist/SimpMeshfree.jar')
+		import simpmeshfree_gui
+		#switches.append('-Djava.class.path=/home/epsilon/SimpMeshfree/dist/SimpMeshfree.jar:/home/epsilon/SimpMeshfree/libs/JavaUtils/dist/EpsilonYUtil.jar')
+		lib_path='-Djava.class.path='+simpmeshfree_gui.__path__[0]+'libs/SimpMeshfree/dist/SimpMeshfree.jar'
+		print "lib_path is ",lib_path
+		switches.append(lib_path)
 #	switches.append('net.epsilony.utils.geom.Coordinate')
 	if debug_port is not None:
 		switches.extend(["-Xdebug", "-Xrunjdwp:transport=dt_socket,address=" + str(debug_port) + ",server=y,suspend=n"])
