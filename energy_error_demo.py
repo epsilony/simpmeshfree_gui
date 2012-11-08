@@ -1,5 +1,5 @@
-from jpype import JArray,java,JPackage,JClass,JInt
-from simpmeshfree_gui.jvm_utils import start_jvm,iter_Iterable
+from jpype import JArray,java,JInt
+from simpmeshfree_gui import jvm_utils as ju
 from simpmeshfree_gui.plot2d import *
 from simpmeshfree_gui.tools import JDArr_List_2_np,JTDList_List_2_np
 import numpy as np
@@ -17,7 +17,7 @@ def get_mat_k(assemblier):
     k_size=get_k_size(assemblier)
     
     mat_k=np.ndarray((k_size,k_size))
-    for me in iter_Iterable(mat):
+    for me in ju.iter_Iterable(mat):
         row=me.row()
         col=me.column()
         if me.row()<k_size and me.column()<k_size:
@@ -34,31 +34,25 @@ if __name__=='__main__':
     debug_port=8998
     if(ben_debug):
         debug_port=None
-    start_jvm(debug_port=debug_port)
-    QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
-    Node=JClass('net.epsilony.utils.geom.Node')
-    TimoshenkoBeam=JClass('net.epsilony.simpmeshfree.model2d.TimoshenkoExactBeam2D')
-    PostProcessor=JClass('net.epsilony.simpmeshfree.model.CommonPostProcessor')
-    CommonUtils=JPackage('net').epsilony.simpmeshfree.utils.CommonUtils
-    Monitors=JPackage('net').epsilony.simpmeshfree.model.WeakformProcessorMonitors
-    
+    ju.start_jvm(debug_port=debug_port)
+
     iterativeSolver=False
     isSimpAsm=False
     core_num=1;
     monitors=java.util.ArrayList()
-    #monitors.add(Monitors.recorder())
-    monitors.add(Monitors.simpLogger())
-    monitor=Monitors.compact(monitors)
+    #monitors.add(WeakformProcessorMonitors.recorder())
+    monitors.add(ju.WeakformProcessorMonitors.simpLogger())
+    monitor=ju.WeakformProcessorMonitors.compact(monitors)
     
     (processor,pipe)=run_processor(iterativeSolver=iterativeSolver,isSimpAsm=isSimpAsm,core_num=core_num,monitor=monitor)
 
-    qp=QuadraturePoint()
-    conLaw=CommonUtils.toDenseMatrix64F(pipe.conLaw)   
+    qp=ju.QuadraturePoint()
+    conLaw=ju.CommonUtils.toDenseMatrix64F(pipe.conLaw)   
     workPb=pipe.workProblem
     tBeam=workPb.tBeam 
     nds=pipe.geomUtils.allNodes
     ndsVal=nodesValue(processor)
-    postProcessor=PostProcessor(processor.shapeFunFactory.factory(),processor.getNodesValue())    
+    postProcessor=ju.CommonPostProcessor(processor.shapeFunFactory.factory(),processor.getNodesValue())    
     (volCoords,diriCoords,diriBnds,neumCoords,neumBnds)=problem_record_Lists(workPb)
     
     assemblier=processor.assemblier

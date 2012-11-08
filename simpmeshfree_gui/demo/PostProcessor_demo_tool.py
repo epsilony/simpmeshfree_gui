@@ -1,5 +1,5 @@
-from jpype import JArray,java,JPackage,JClass,JInt
-from simpmeshfree_gui.jvm_utils import start_jvm,iter_Iterable
+from jpype import JArray,java,JInt
+from simpmeshfree_gui import jvm_utils as ju
 from simpmeshfree_gui.plot2d import *
 from simpmeshfree_gui.tools import JDArr_List_2_np,JTDList_List_2_np
 import numpy as np
@@ -11,7 +11,7 @@ def _exact_value(tBeam,coords,val_type):
     (fun,args,numCol)=fun_map[val_type]
     result=np.ndarray((coords.size(),numCol))
     i=0
-    for coord in iter_Iterable(coords):
+    for coord in ju.iter_Iterable(coords):
         result[i]=fun(coord.x,coord.y,*args)
         i+=1
     return result
@@ -35,7 +35,7 @@ def nodesValue(processer):
 
 def run_processor(iterativeSolver=False,isSimpAsm=True,core_num=None,monitor=None):
     
-    WU=JClass('net.epsilony.simpmeshfree.model2d.test.WeakformProcessor2DDemoUtils')
+    WU=ju.WeakformProcessor2DDemoUtils
     pipe=WU.newPipe()
     processor=WU.timoshenkoBeam(pipe,iterativeSolver,isSimpAsm)
     if(monitor is not None):
@@ -48,34 +48,33 @@ def run_processor(iterativeSolver=False,isSimpAsm=True,core_num=None,monitor=Non
     return (processor,pipe)
 
 def problem_record_Lists(pb):
-    QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
-    Node=JClass('net.epsilony.utils.geom.Node')
-    qp=QuadraturePoint()
+   
+    qp=ju.QuadraturePoint()
 
     volIter=pb.volumeIterator()
     volCoords=java.util.ArrayList(volIter.sumNum)
     while(volIter.next(qp)):
-        volCoords.add(Node(qp.coordinate))
+        volCoords.add(ju.Node(qp.coordinate))
     
     diriIter=pb.dirichletIterator()
     diriCoords=java.util.ArrayList(diriIter.sumNum)
     diriBnds=java.util.ArrayList(diriIter.sumNum)
     
     while(diriIter.next(qp)):
-        diriCoords.add(Node(qp.coordinate))
+        diriCoords.add(ju.Node(qp.coordinate))
         diriBnds.add(qp.boundary)
         
     neumIter=pb.neumannIterator()
     neumCoords=java.util.ArrayList(neumIter.sumNum)
     neumBnds=java.util.ArrayList(neumIter.sumNum)
     while(neumIter.next(qp)):
-        neumCoords.add(Node(qp.coordinate))
+        neumCoords.add(ju.Node(qp.coordinate))
         neumBnds.add(qp.boundary);
     
     return (volCoords,diriCoords,diriBnds,neumCoords,neumBnds)
 
 def sample_Coords(width,height,step=0.5,bndTrans=0.01):
-    Coordinate = JPackage('net').epsilony.utils.geom.Coordinate
+    
     numCol=math.ceil(width/step)+1
     numRow=math.ceil(height/step)+1
     xs=np.linspace(bndTrans,width-bndTrans,numCol)
@@ -83,7 +82,7 @@ def sample_Coords(width,height,step=0.5,bndTrans=0.01):
     crds=java.util.ArrayList(len(xs)*len(ys))
     for y in ys:
         for x in xs:
-            crds.add(Coordinate(x,y))
+            crds.add(ju.Coordinate(x,y))
     return crds
 
 def plot_on_line(tBeam,postProcessor,x=None,y=0,val_type='displacement',step=0.1,margin=0.01,conLaw=None):
@@ -102,9 +101,9 @@ def plot_on_line(tBeam,postProcessor,x=None,y=0,val_type='displacement',step=0.1
     else:
         raise ValueError('One of x of y must be set!')
     coords=java.util.ArrayList(len(xs))
-    Coordinate=JClass('net.epsilony.utils.geom.Coordinate')
+    
     for i in xrange(len(xs)):
-        coords.add(Coordinate(xs[i],ys[i]))
+        coords.add(ju.Coordinate(xs[i],ys[i]))
     if val_type=='displacement':
         exactDisps=_exact_value(tBeam, coords, val_type)
         disps=JTDList_List_2_np(postProcessor.displacements(coords,None,1)).transpose()
@@ -114,16 +113,14 @@ def plot_on_line(tBeam,postProcessor,x=None,y=0,val_type='displacement',step=0.1
     elif val_type=='stress':
         exactStress=_exact_value(tBeam,coords,val_type)
         disps_JTDList=postProcessor.displacements(coords,None,1)
-        CommonPostProcessor=JClass('net.epsilony.simpmeshfree.model.CommonPostProcessor')
-        stresses=JTDList_List_2_np(CommonPostProcessor.stress2D(disps_JTDList,2,conLaw)).transpose()
+        stresses=JTDList_List_2_np(ju.CommonPostProcessor.stress2D(disps_JTDList,2,conLaw)).transpose()
         output_ys_1=exactStress
         output_ys_2=stresses
         output_labels=('exact stress_xx','exact stress_yy','exact stress_xy','stress_xx','stress_yy','stress_xy')
     elif val_type=='strain':
         exactStrain=_exact_value(tBeam,coords,val_type)
         disps_JTDList=postProcessor.displacements(coords,None,1)
-        CommonPostProcessor=JClass('net.epsilony.simpmeshfree.model.CommonPostProcessor')
-        strains=JTDList_List_2_np(CommonPostProcessor.strain2D(disps_JTDList,2)).transpose()
+        strains=JTDList_List_2_np(ju.CommonPostProcessor.strain2D(disps_JTDList,2)).transpose()
         output_ys_1=exactStrain
         output_ys_2=strains
         output_labels=('exact strain_xx','exact strain_yy','exact strain_xy','strain_xx','strain_yy','strain_xy')

@@ -1,5 +1,5 @@
-from jpype import JArray,java,JPackage,JClass,JInt
-from simpmeshfree_gui.jvm_utils import start_jvm,iter_Iterable
+from jpype import *
+from simpmeshfree_gui import jvm_utils as ju
 from simpmeshfree_gui.plot2d import *
 from simpmeshfree_gui.tools import JDArr_List_2_np,JTDList_List_2_np
 from simpmeshfree_gui.demo.PostProcessor_demo_tool import *
@@ -7,33 +7,33 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
         
-if __name__=='__main__':
-    start_jvm(debug_port=8998)
-    QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
-    Node=JClass('net.epsilony.utils.geom.Node')
-    TimoshenkoBeam=JClass('net.epsilony.simpmeshfree.model2d.TimoshenkoExactBeam2D')
-    PostProcessor=JClass('net.epsilony.simpmeshfree.model.CommonPostProcessor')
-    CommonUtils=JPackage('net').epsilony.spfun.CommonUtils
-    Monitors=JPackage('net').epsilony.simpmeshfree.model.WeakformProcessorMonitors
-    
+if __name__=="__main__":
+    ju.start_jvm(debug_port=8998)
+#    QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
+#    Node=JClass('net.epsilony.utils.geom.Node')
+#    TimoshenkoBeam=JClass('net.epsilony.simpmeshfree.model2d.TimoshenkoExactBeam2D')
+#    CommonPostProcessor=JClass('net.epsilony.simpmeshfree.model.CommonPostProcessor')
+#    CommonUtils=JPackage('net').epsilony.spfun.CommonUtils
+#    WeakformProcessorMonitors=JPackage('net').epsilony.simpmeshfree.model.WeakformProcessorMonitors
+#    
     iterativeSolver=False
     isSimpAsm=False
     core_num=1;
     monitors=java.util.ArrayList()
-    monitors.add(Monitors.recorder())
-    monitors.add(Monitors.simpLogger())
-    monitor=Monitors.compact(monitors)
+    monitors.add(ju.WeakformProcessorMonitors.recorder())
+    monitors.add(ju.WeakformProcessorMonitors.simpLogger())
+    monitor=ju.WeakformProcessorMonitors.compact(monitors)
     
     (processor,pipe)=run_processor(iterativeSolver=iterativeSolver,isSimpAsm=isSimpAsm,core_num=core_num,monitor=monitor)
     
-    qp=QuadraturePoint()
-    conLaw=CommonUtils.toDenseMatrix64F(pipe.conLaw)   
+    qp=ju.QuadraturePoint()
+    conLaw=ju.CommonUtils.toDenseMatrix64F(pipe.conLaw)   
     
     workPb=pipe.workProblem
     tBeam=workPb.tBeam 
     nds=pipe.geomUtils.allNodes
     ndsVal=nodesValue(processor)
-    postProcessor=PostProcessor(processor.genShapeFunctionPacker(),processor.getNodesValue())    
+    postProcessor=ju.CommonPostProcessor(processor.genShapeFunctionPacker(),processor.getNodesValue())    
     (volCoords,diriCoords,diriBnds,neumCoords,neumBnds)=problem_record_Lists(workPb)
     
     ndsExactRes=exact_displacements(tBeam,nds)
@@ -44,11 +44,11 @@ if __name__=='__main__':
     smpDispTDLists=postProcessor.displacements(smpCoords,None,1)
     smpDisps=JTDList_List_2_np(smpDispTDLists.subList(0,2)).transpose()
     
-    smpStrainTDList=PostProcessor.strain2D(smpDispTDLists,2)
+    smpStrainTDList=ju.CommonPostProcessor.strain2D(smpDispTDLists,2)
     smpStrain=JTDList_List_2_np(smpStrainTDList).transpose()
     smpExactStrain=exact_strain(tBeam, smpCoords)
     
-    smpStressTDList=PostProcessor.stress2D(smpDispTDLists,2,conLaw)
+    smpStressTDList=ju.CommonPostProcessor.stress2D(smpDispTDLists,2,conLaw)
     smpStress=JTDList_List_2_np(smpStressTDList).transpose()
     smpExactStress=exact_stress(tBeam,smpCoords)
     

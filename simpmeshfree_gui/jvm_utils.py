@@ -1,8 +1,42 @@
 # -*- coding: utf-8 -*-
-from jpype import startJVM, getDefaultJVMPath, isJVMStarted
+from jpype import startJVM, getDefaultJVMPath, isJVMStarted,JPackage,JClass
 import os
 from multiprocessing import Process, Queue, Lock
 from collections import deque
+
+Node,BoundaryUtilsTestUtils,QuadraturePoint, \
+	TimoshenkoExactBeam2D,CommonPostProcessor,  \
+	CommonUtils,WeakformProcessorMonitors,Coordinate, \
+	WeakformProcessor2DDemoUtils,QuadPixcellAtomSample, \
+	QuadPixcellAtomSample,QuadPixcellRectangleSample,QuadPixcellManager, \
+	LocationAdaptiveFilter,Triangle,Quadrangle,UniformTensionInfinitePlateSample \
+	=[None for i in xrange(17)]
+
+
+def import_classes():
+	if not isJVMStarted():
+		print "Jvm has not been started! No class is imported!"
+		return
+	global Node,BoundaryUtilsTestUtils,QuadraturePoint,TimoshenkoExactBeam2D,CommonPostProcessor
+	global CommonUtils,WeakformProcessorMonitors,Coordinate,WeakformProcessor2DDemoUtils
+	global QuadPixcellAtomSample,QuadPixcellRectangleSample,QuadPixcellManager
+	global LocationAdaptiveFilter,Triangle,Quadrangle,UniformTensionInfinitePlateSample
+	Node=JPackage('net').epsilony.utils.geom.Node
+	BoundaryUtilsTestUtils=JPackage('net').epsilony.simpmeshfree.model.test.BoundaryUtilsTestUtils
+	QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
+	TimoshenkoExactBeam2D=JClass('net.epsilony.simpmeshfree.model2d.TimoshenkoExactBeam2D')
+	CommonPostProcessor=JClass('net.epsilony.simpmeshfree.model.CommonPostProcessor')
+	CommonUtils=JPackage('net').epsilony.spfun.CommonUtils
+	WeakformProcessorMonitors=JPackage('net').epsilony.simpmeshfree.model.WeakformProcessorMonitors
+	Coordinate = JPackage('net').epsilony.utils.geom.Coordinate
+	WeakformProcessor2DDemoUtils=JClass('net.epsilony.simpmeshfree.model2d.test.WeakformProcessor2DDemoUtils')
+	QuadPixcellAtomSample=JPackage('net').epsilony.simpmeshfree.adpt2d.sample.QuadPixcellAtomSample
+	QuadPixcellRectangleSample=JPackage('net').epsilony.simpmeshfree.adpt2d.sample.QuadPixcellRectangleSample
+	QuadPixcellManager=JPackage('net').epsilony.simpmeshfree.adpt2d.QuadPixcellManager
+	LocationAdaptiveFilter=JPackage('net').epsilony.simpmeshfree.adpt2d.sample.LocationAdaptiveFilter
+	Triangle = JClass('net.epsilony.utils.geom.Triangle')
+	Quadrangle = JClass('net.epsilony.utils.geom.Quadrangle')
+	UniformTensionInfinitePlateSample=JPackage('net').epsilony.simpmeshfree.model2d.test.UniformTensionInfinitePlateSample
 
 def start_jvm(debug_port=None):
 	if isJVMStarted():
@@ -24,6 +58,7 @@ def start_jvm(debug_port=None):
 	if debug_port is not None:
 		switches.extend(["-Xdebug", "-Xrunjdwp:transport=dt_socket,address=" + str(debug_port) + ",server=y,suspend=n"])
 	startJVM(jvm_path, *switches)
+	import_classes()
 	
 
 def _deque_from_Iterator(iterator):

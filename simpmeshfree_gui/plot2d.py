@@ -1,9 +1,10 @@
 from collections import deque
 from matplotlib.path import Path
 from matplotlib.patches import PathPatch, Circle
-from simpmeshfree_gui.jvm_utils import iter_Iterable
+from simpmeshfree_gui import jvm_utils as ju
 import numpy as np
-from jpype import java, JClass, JPackage,JArray,JInt
+from jpype import java, JArray,JInt
+import jpype
 
 def merge_paths(*args):
     len_vs = 0
@@ -96,7 +97,7 @@ def gen_boundary_path(bndList):
 def get_x_y(nodeList):
     x = deque()
     y = deque()
-    for nd in iter_Iterable(nodeList):
+    for nd in ju.iter_Iterable(nodeList):
         x.append(nd.x)
         y.append(nd.y)
     return (x, y)
@@ -128,16 +129,15 @@ class _Point(object):
 def gen_net_path(itemList):
     pt_lnk = {}
     points = deque()
-    Triangle = JClass('net.epsilony.utils.geom.Triangle')
-    Quadrangle = JClass('net.epsilony.utils.geom.Quadrangle')
-    for item in iter_Iterable(itemList):
-        if isinstance(item, Triangle):
+    
+    for item in ju.iter_Iterable(itemList):
+        if isinstance(item, ju.Triangle):
             tri = item
             pts = (_Point(tri.c1.x, tri.c1.y),
                  _Point(tri.c2.x, tri.c2.y),
                  _Point(tri.c3.x, tri.c3.y))
             pts_len = 3;
-        elif isinstance(item, Quadrangle):
+        elif isinstance(item, ju.Quadrangle):
             quad = item
             pts = (_Point(quad.x1, quad.y1),
                  _Point(quad.x2, quad.y2),
@@ -232,7 +232,7 @@ class SupportDomainPainter(object):
         self.visible_status_patch_b1_setting = {'color':'blue', 'lw':2, 'zorder':2, 'alpha':0.5}
         self.visible_status_patch_b2_setting = {'color':'blue', 'lw':3, 'zorder':2, 'alpha':0.4}
         
-        TIntArrayList = JClass('gnu.trove.list.array.TIntArrayList')
+        TIntArrayList = jpype.JClass('gnu.trove.list.array.TIntArrayList')
         self.nodeBlockNums = TIntArrayList(100)
         self.nodeBlockBndIdx = TIntArrayList(100)
         
@@ -362,8 +362,7 @@ class WeakformProblemPainter(object):
         self.problem=problem
     
     def plot(self):
-        QuadraturePoint =JPackage('net').epsilony.simpmeshfree.utils.QuadraturePoint
-        qp=QuadraturePoint()
+        qp=ju.QuadraturePoint()
         pb=self.problem
         JintArray=JArray(JInt)
         numOut=JintArray([0])

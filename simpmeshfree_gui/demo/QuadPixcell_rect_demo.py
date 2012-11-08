@@ -1,7 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
-from jpype import JPackage
-from simpmeshfree_gui.jvm_utils import start_jvm
+from simpmeshfree_gui import jvm_utils as ju
 from simpmeshfree_gui.pixcell_painter import *
 
 def refine_and_plot(manager,ax1,ax2):
@@ -28,15 +27,12 @@ def merge_and_plot(manager,ax1,ax2):
 
 
 if __name__=='__main__':
-    start_jvm(debug_port=8998)
-    J_sample_cls=JPackage('net').epsilony.simpmeshfree.adpt2d.sample.QuadPixcellRectangleSample
-    QuadPixcellManager=JPackage('net').epsilony.simpmeshfree.adpt2d.QuadPixcellManager
-    LocationAdaptiveFilter=JPackage('net').epsilony.simpmeshfree.adpt2d.sample.LocationAdaptiveFilter
+    ju.start_jvm(debug_port=8998)
     fig=plt.figure()
     ax1=fig.add_subplot(121,aspect='equal')
     ax2=fig.add_subplot(122,aspect='equal')
     (x0,y0,w,h,scale)=(2.0,1.0,15.0,10.0,5.0)
-    pxes=J_sample_cls.genPixcells(x0,y0,w,h,scale)
+    pxes=ju.QuadPixcellRectangleSample.genPixcells(x0,y0,w,h,scale)
     
     #QuadPixcells_plot(pxes,ax1)
     
@@ -67,7 +63,7 @@ if __name__=='__main__':
     #ax32=fig3.add_subplot(222,aspect='equal')
     ax33=fig3.add_subplot(223,aspect='equal')
     ax34=fig3.add_subplot(224,aspect='equal')
-    pxes3=J_sample_cls.genPixcells(x0,y0,w,h,scale)
+    pxes3=QuadPixcellRectangleSample.genPixcells(x0,y0,w,h,scale)
     manager3=QuadPixcellManager(pxes3,af)
     QuadPixcells_plot(pxes3,ax31)
     for i in range(ti):

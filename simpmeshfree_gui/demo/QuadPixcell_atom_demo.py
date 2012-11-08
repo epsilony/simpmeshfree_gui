@@ -1,16 +1,16 @@
 from matplotlib import pyplot as plt
 import numpy as np
-from simpmeshfree_gui.jvm_utils import *
+from simpmeshfree_gui import jvm_utils as ju
 from jpype import *
 from simpmeshfree_gui.pixcell_painter import *
 
 def ori_demo():
-    QuadPixcellAtomSample = JPackage('net').epsilony.simpmeshfree.adpt2d.sample.QuadPixcellAtomSample
+   
     fig = plt.figure()
     fig.show()
     for smallbit in xrange(16):
         ax = fig.add_subplot(4, 4, smallbit + 1, aspect='equal')
-        samples = QuadPixcellAtomSample.refineSamples(0.0, 0.0, 5.0, smallbit)
+        samples = ju.QuadPixcellAtomSample.refineSamples(0.0, 0.0, 5.0, smallbit)
         QuadPixcells_plot(samples, ax)
     fig.canvas.draw()
     return fig
@@ -20,7 +20,7 @@ def refine_demo():
     fig2.show()
     for smallbit in xrange(16):
         ax2 = fig2.add_subplot(4, 4, smallbit + 1, aspect='equal')
-        samples2 = QuadPixcellAtomSample.refineSamples(0.0, 0.0, 5.0, smallbit)
+        samples2 = ju.QuadPixcellAtomSample.refineSamples(0.0, 0.0, 5.0, smallbit)
         refined = samples2[0].refine()
         samples2 = [px for px in samples2]
         samples2.extend(refined[1:4])
@@ -29,12 +29,11 @@ def refine_demo():
     return fig2
     
 def merge_after_ref_demo():
-    QuadPixcellAtomSample = JPackage('net').epsilony.simpmeshfree.adpt2d.sample.QuadPixcellAtomSample
     fig = plt.figure()
     fig.show()
     for smallbit in xrange(16):
         ax = fig.add_subplot(4, 4, smallbit + 1, aspect='equal')
-        samples = QuadPixcellAtomSample.refineSamples(0.0, 0.0, 5.0, smallbit)
+        samples = ju.QuadPixcellAtomSample.refineSamples(0.0, 0.0, 5.0, smallbit)
         refined = samples[0].refine()
         samples = [px for px in samples]
         samples.extend(refined[1:4])
@@ -46,9 +45,8 @@ def merge_after_ref_demo():
     return fig
 
 if __name__ == "__main__":
-    start_jvm(debug_port=8998)
-    QuadPixcellAtomSample = JPackage('net').epsilony.simpmeshfree.adpt2d.sample.QuadPixcellAtomSample
-    
+    ju.start_jvm(debug_port=8998)
+     
     fig1 = ori_demo()
     
     fig2 = refine_demo()

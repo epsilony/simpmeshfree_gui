@@ -20,9 +20,9 @@ def get_ndarray(mat):
 
 if __name__=="__main__":
     start_jvm(debug_port=8998)
-    UTIPS=JPackage('net').epsilony.simpmeshfree.model2d.test.UniformTensionInfinitePlateSample
-    sample_plate=UTIPS.simpSample()
-    process=UTIPS.genSampleProcessor()
+    UniformTensionInfinitePlateSample=JPackage('net').epsilony.simpmeshfree.model2d.test.UniformTensionInfinitePlateSample
+    sample_plate=UniformTensionInfinitePlateSample.simpSample()
+    process=UniformTensionInfinitePlateSample.genSampleProcessor()
     quadrangles=sample_plate.getQuadrangles()
     
     fig=plt.figure()

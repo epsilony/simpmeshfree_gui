@@ -5,21 +5,19 @@ Created on 2012-5-25
 
 @author: epsilon
 '''
-from simpmeshfree_gui.jvm_utils import *
+from simpmeshfree_gui import jvm_utils as ju
 from jpype import *
 from matplotlib.patches import Circle
 import matplotlib.pyplot as plt
 import numpy as np
 if __name__ == '__main__':
-    start_jvm(debug_port=8998)
-    BTU=JPackage('net').epsilony.simpmeshfree.model.test.BoundaryUtilsTestUtils
-    Node=JPackage('net').epsilony.utils.geom.Node
-    center=Node(12.45,-20.8)
+    ju.start_jvm(debug_port=8998)
+    center=ju.Node(12.45,-20.8)
     rad=9.0
     theta=np.pi*2.1/3
     distances=[rad,rad-1,rad+1]
     colors=['red','green','black']
-    lines=[np.array(BTU.genLine2DPerpendicularTo(center,theta,d,-rad,-rad/2)) for d in distances]
+    lines=[np.array(ju.BoundaryUtilsTestUtils.genLine2DPerpendicularTo(center,theta,d,-rad,-rad/2)) for d in distances]
     fig=plt.figure()
     ax=fig.add_subplot(111)
     idx=0
