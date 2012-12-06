@@ -9,8 +9,8 @@ Node,BoundaryUtilsTestUtils,QuadraturePoint, \
 	CommonUtils,WeakformProcessorMonitors,Coordinate, \
 	WeakformProcessor2DDemoUtils,QuadPixcellAtomSample, \
 	QuadPixcellAtomSample,QuadPixcellRectangleSample,QuadPixcellManager, \
-	LocationAdaptiveFilter,Triangle,Quadrangle,UniformTensionInfinitePlateSample \
-	=[None for i in xrange(17)]
+	LocationAdaptiveFilter,Triangle,Quadrangle,UniformTensionInfinitePlateSample, \
+	SampleLSF,SampleC1LSF,SampleC2LSF=[None for i in xrange(20)]
 
 
 def import_classes():
@@ -21,6 +21,7 @@ def import_classes():
 	global CommonUtils,WeakformProcessorMonitors,Coordinate,WeakformProcessor2DDemoUtils
 	global QuadPixcellAtomSample,QuadPixcellRectangleSample,QuadPixcellManager
 	global LocationAdaptiveFilter,Triangle,Quadrangle,UniformTensionInfinitePlateSample
+	global SampleLSF,SampleC1LSF,SampleC2LSF
 	Node=JPackage('net').epsilony.utils.geom.Node
 	BoundaryUtilsTestUtils=JPackage('net').epsilony.simpmeshfree.model.test.BoundaryUtilsTestUtils
 	QuadraturePoint=JClass('net.epsilony.simpmeshfree.utils.QuadraturePoint')
@@ -37,6 +38,9 @@ def import_classes():
 	Triangle = JClass('net.epsilony.utils.geom.Triangle')
 	Quadrangle = JClass('net.epsilony.utils.geom.Quadrangle')
 	UniformTensionInfinitePlateSample=JPackage('net').epsilony.simpmeshfree.model2d.test.UniformTensionInfinitePlateSample
+	SampleLSF=JClass('net.epsilony.levelset.functions.SampleLSF')
+	SampleC1LSF=JClass('net.epsilony.levelset.functions.SampleC1LSF')
+	SampleC2LSF=JClass('net.epsilony.levelset.functions.SampleC2LSF')
 
 def start_jvm(debug_port=None):
 	if isJVMStarted():
